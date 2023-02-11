@@ -12,7 +12,8 @@ OBJECTS_DIR = ./obj
 
 SOURCES += \
         constants.cpp \
-        main.cpp
+        main.cpp \
+        messages.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -20,4 +21,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    constants.h
+    constants.h \
+    messages.h
