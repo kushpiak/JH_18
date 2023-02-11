@@ -12,7 +12,9 @@ OBJECTS_DIR = ./obj
 
 SOURCES += \
         constants.cpp \
+        jh18.cpp \
         main.cpp \
+        message_handler_libs.cpp \
         messages.cpp
 
 # Default rules for deployment.
@@ -22,4 +24,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     constants.h \
+    jh18.h \
+    message_handler_libs.h \
     messages.h

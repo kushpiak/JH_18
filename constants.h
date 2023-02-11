@@ -1,5 +1,7 @@
 #pragma once
+#include <QDateTime>
 #include <QString>
+#include <cmath>
 #include <iostream>
 #include <ostream>
 #ifdef _WIN32
@@ -193,7 +195,60 @@ struct GwAOMess : public HEADERMES {
 };
 typedef struct GwAOMess GwAOMess;
 
-class constants {
-public:
-    constants();
+enum Colors {
+    Black,
+    Blue,
+    Green,
+    Cyan,
+    Red,
+    Magenta,
+    Brown,
+    LightGray,
+    DarkGray,
+    LightBlue,
+    LightGreen,
+    LightCyan,
+    LightRed,
+    LightMagenta,
+    Yellow,
+    White
 };
+#ifdef _WIN32
+template <int txt = 7, int bg = 0>
+std::ostream& color(std::ostream& text)
+{
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hStdOut, (WORD)((bg << 4) | txt));
+    return text;
+}
+#else
+template <int txt = 7, int bg = 0>
+std::ostream& color(std::ostream& text)
+{
+    return text;
+}
+
+#endif
+
+#define T_BIT 8
+
+void setBit(unsigned char* m_pData, int nIndex, bool bSet);
+
+// iLowBit - бит начала записи; iHiBit - бит конца записи (слева направо с нумерация с 1)
+void insertInt(unsigned char* pBuf, int Value, int iLowBit, int iLen);
+
+bool getBit(unsigned char* m_pData, int nIndex);
+
+int extractInt(unsigned char* pBuf, int iLowBit, int iLen);
+
+int checkSum(unsigned char* msg, int size);
+
+void doubleCoordInGradMinSec(const double& in, int& grad, int& min, int& sec);
+
+void convert16_to_high8_and_low8(int& beg, int& high, int& low);
+
+void convert16_to_high8_and_low8(uint16_t& beg, int& high, int& low);
+
+void convert24_to_high8_med8_low8(uint32_t& beg, int& high, int& med, int& low);
+
+void convert32_to_hhigh8_high8_med8_low8(uint32_t& beg, int& hhigh, int& high, int& med, int& low);
