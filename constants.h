@@ -1,9 +1,14 @@
 #pragma once
 #include <QDateTime>
 #include <QString>
+#include <bitset>
 #include <cmath>
 #include <iostream>
+#include <math.h>
+#include <memory>
 #include <ostream>
+#include <string.h>
+#include <vector>
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -194,6 +199,12 @@ struct GwAOMess : public HEADERMES {
     }
 };
 typedef struct GwAOMess GwAOMess;
+
+typedef const unsigned char* const InputDataType;
+
+typedef std::shared_ptr<HEADERMES> MessPointer;
+
+typedef std::vector<MessPointer> Container;
 
 enum Colors {
     Black,

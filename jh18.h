@@ -3,6 +3,10 @@
 
 class jh18 {
 public:
+    int decode_part(InputDataType _input, const size_t& _size, Container& _output);
+
+    int decode(InputDataType _input, const size_t& _size, Container& _output);
+
     virtual int CoderVO(MessageVO& messVO, unsigned char* _buffer, const int& _size);
     virtual int DecoderVO(MessageVO& messVO, unsigned char* _buffer, const int& _size);
     virtual int CoderDISAPPEARANCE(MessageDISAPPEARANCE& messVO, unsigned char* _buffer, const int& _size);

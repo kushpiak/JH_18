@@ -13,3 +13,5 @@ void decoderSTANDPOINT();
 
 void coder();
 void decodeblock();
+
+void decodereal();

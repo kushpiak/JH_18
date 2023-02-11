@@ -1020,3 +1020,99 @@ int jh18::CoderVO(MessageVO& messVO, unsigned char* _buffer, const int& _size)
 
     return required_length;
 }
+
+int jh18::decode_part(InputDataType _input, const size_t& _size, Container& _output)
+{
+    if (_input == nullptr) {
+        return -1;
+    }
+
+    unsigned int global_count(0);
+    Container cont;
+
+    int result(0);
+    int residue(_size - global_count);
+
+    InputDataType message(_input + global_count);
+
+    unsigned char* data(const_cast<unsigned char*>(message));
+
+    unsigned char message_len = static_cast<char>(data[2]);
+    if ((message_len == 0x1f) & (_size == JH18_VO_SIZE)) // ? не приходит ли вместе с ВО и пеленг  и что делать в этом случае
+    {
+        cont.emplace_back(MessPointer(new GwAOMess));
+        GwAO* dataVO = &((GwAOMess*)cont.back().get())->Data;
+        MessageVO messVO;
+        result = DecoderVO(messVO, data, residue);
+    } else if ((message_len == 0x0f) & (_size == JH18_SECTOR_SIZE)) {
+        cont.emplace_back(MessPointer(new GwAOMess));
+        GwAO* dataVO = &((GwAOMess*)cont.back().get())->Data;
+        MessageSECTOR messVO;
+        result = DecoderSECTOR(messVO, data, residue);
+    } else if ((message_len == 0x1c) & (_size == JH18_DISAPPEARANCE_SIZE)) {
+        cont.emplace_back(MessPointer(new GwAOMess));
+        GwAO* dataVO = &((GwAOMess*)cont.back().get())->Data;
+        MessageDISAPPEARANCE messVO;
+        result = DecoderDISAPPEARANCE(messVO, data, residue);
+    } else if ((message_len == 0x29) & (_size == JH18_NETTED_SIZE)) {
+        cont.emplace_back(MessPointer(new GwAOMess));
+        GwAO* dataVO = &((GwAOMess*)cont.back().get())->Data;
+        MessageNETTED messVO;
+        result = DecoderNETTED(messVO, data, residue);
+    } else {
+        // Unknown message
+        result = -5;
+    }
+    if (result <= 0) {
+        return result;
+    }
+
+    global_count += result;
+
+    std::copy(cont.begin(), cont.end(), std::back_inserter(_output));
+
+    return global_count;
+}
+
+int jh18::decode(InputDataType _input, const size_t& _size, Container& _output)
+{
+    if (!_input)
+        return -1; // если ссылка на блок не существует
+    if (_size < 2)
+        return -1;
+    unsigned int current_byte_count { 0 };
+    while (current_byte_count < _size) {
+        int result { 0 };
+        InputDataType message(_input + current_byte_count);
+
+        // unsigned char *data(const_cast<unsigned char *>(message));
+        if (message[2] == 0x1f) // track report
+        {
+            char tempVO[JH18_VO_SIZE];
+            memcpy(tempVO, message, JH18_VO_SIZE);
+            result = decode_part(message, JH18_VO_SIZE, _output);
+        } else if (message[2] == 0x0f) //sector report
+        {
+            char tempSL[JH18_SECTOR_SIZE];
+            memcpy(tempSL, message, JH18_SECTOR_SIZE);
+            result = decode_part(message, JH18_SECTOR_SIZE, _output);
+        } else if (message[2] == 0x1c) //track disappearance report
+        {
+            char tempSL[JH18_DISAPPEARANCE_SIZE];
+            memcpy(tempSL, message, JH18_DISAPPEARANCE_SIZE);
+            result = decode_part(message, JH18_DISAPPEARANCE_SIZE, _output);
+        } else if (message[2] == 0x29) //netted radar configuration report
+        {
+            char tempSL[JH18_NETTED_SIZE];
+            memcpy(tempSL, message, JH18_NETTED_SIZE);
+            result = decode_part(message, JH18_NETTED_SIZE, _output);
+        } else
+            return -1; // если блок начинается с неизвестного символа
+        if (result <= 0) {
+            return result;
+        }
+        current_byte_count += result;
+    }
+
+    return current_byte_count;
+}
