@@ -389,7 +389,8 @@ void decodereal()
     jh18 obj;
     //int rez = decode(ref_input, sizeof(input_data_VO_SECTOR_DIS_NETTED), cont);
     //int rez = decode(ref_input2, sizeof(input_data_VO), cont);
-    int rez = obj.decode(ref_input3, sizeof(input_data_VO_single), cont);
+    //int rez = obj.decode(ref_input3, sizeof(input_data_VO_single), cont);
+    int rez = obj.decode(ref_input3, 512, cont);
 
     int y = 0;
 }

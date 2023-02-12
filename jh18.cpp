@@ -234,7 +234,7 @@ int jh18::DecoderVO(MessageVO& messVO, unsigned char* _buffer, const int& _size)
     qint64 t3 = t2 + time;
     dateTime.setMSecsSinceEpoch(t3);*/
 
-    int calc_checksum = checkSum(_buffer + 2, _size - 3);
+    int calc_checksum = checkSum(_buffer + 2, required_length - 3);
 
     messVO.prefix = static_cast<uint16_t>(prefix);
     messVO.len = static_cast<uint16_t>(len);
@@ -471,7 +471,7 @@ int jh18::DecoderDISAPPEARANCE(MessageDISAPPEARANCE& messVO, unsigned char* _buf
     uint16_t track_number = tracknumber_high << 8;
     track_number += tracknumber_lower;
 
-    int calc_checksum = checkSum(_buffer + 2, _size - 3);
+    int calc_checksum = checkSum(_buffer + 2, required_length - 3);
 
     messVO.prefix = static_cast<uint16_t>(prefix);
     messVO.len = static_cast<uint16_t>(len);
@@ -640,7 +640,7 @@ int jh18::DecoderSECTOR(MessageSECTOR& messVO, unsigned char* _buffer, const int
     uint16_t information_label = informationLabel_high << 8;
     information_label += informationLabel_lower;
 
-    int calc_checksum = checkSum(_buffer + 2, _size - 3);
+    int calc_checksum = checkSum(_buffer + 2, required_length - 3);
 
     messVO.prefix = static_cast<uint16_t>(prefix);
     messVO.len = static_cast<uint16_t>(len);
@@ -837,7 +837,7 @@ int jh18::DecoderNETTED(MessageNETTED& messVO, unsigned char* _buffer, const int
     uint16_t altitude = radar_altitude_high << 8;
     altitude += radar_altitude_lower;
 
-    int calc_checksum = checkSum(_buffer + 2, _size - 3);
+    int calc_checksum = checkSum(_buffer + 2, required_length - 3);
 
     messVO.prefix = static_cast<uint16_t>(prefix);
     messVO.len = static_cast<uint16_t>(len);
@@ -1093,12 +1093,12 @@ int jh18::decode(InputDataType _input, const size_t& _size, Container& _output)
             result = decode_part(message, JH18_VO_SIZE, _output);
         } else if (message[2] == 0x0f) //sector report
         {
-            char tempSL[JH18_SECTOR_SIZE];
+            char tempSL[JH18_SECTOR_SIZE]; //empty
             memcpy(tempSL, message, JH18_SECTOR_SIZE);
             result = decode_part(message, JH18_SECTOR_SIZE, _output);
         } else if (message[2] == 0x1c) //track disappearance report
         {
-            char tempSL[JH18_DISAPPEARANCE_SIZE];
+            char tempSL[JH18_DISAPPEARANCE_SIZE]; //empty
             memcpy(tempSL, message, JH18_DISAPPEARANCE_SIZE);
             result = decode_part(message, JH18_DISAPPEARANCE_SIZE, _output);
         } else if (message[2] == 0x29) //netted radar configuration report
